@@ -75,8 +75,9 @@ minimum-scale = 1" />
               </li>
 
             </ul>
-            <div class="form-inline my-2 my-lg-0">
-	     	<a href="#"class="btn btn-warning">Login</a>
+
+            <div class="form-inline my-2 my-lg-0" id="login">
+	     	<a href="{% url 'login' %}"class="btn btn-warning">Login</a>
 
 	     	<a href="{% url 'cart' %}">
 	    		<img  id="cart-icon" src="{% static 'images/cart.png' %}">
@@ -84,6 +85,20 @@ minimum-scale = 1" />
 	    	<p id="cart-total">{{cartItems}}</p>
 
 	    </div>
+              {% if request.user.is_authenticated %}
+              <div class="form-inline my-2 my-lg-0">
+                <span style="color:white;">Bienvenue, <span style="color:red">{{request.user}}|</span> </span>&nbsp;
+                <span><a href="{% url 'logout' %}"> Logout</a></span>
+                  <a href="{% url 'cart' %}">
+	    		<img  id="cart-iconn" src="{% static 'images/cart.png' %}">
+	    	</a>
+	    	<p id="cart-totall">{{cartItems}}</p>
+
+	        </div>
+              <script>
+                  document.getElementById('login').innerHTML = ''
+              </script>
+              {% endif %}
       </div>
 </nav>
         <div class="container">

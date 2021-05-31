@@ -1,10 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import JsonResponse
 import json
 import  datetime
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate,login,logout
 from .models import *
 from .utils import cookieCart,cartData,guestOder
+from .forms import *
+from django.contrib import messages
 
 # Create your views here.
 @csrf_exempt
@@ -102,3 +105,40 @@ def processOrder(request):
         )
 
     return JsonResponse('Payment complete', safe=False)
+
+
+
+def registerPage(request):
+    form = CreateUserForm()
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = form.cleaned_data.get('username')
+            messages.success(request,'Le compte'+ user + 'a ete cree')
+            return redirect('login')
+    context = {
+            'form': form,
+        }
+
+    return render(request,'store/register.html',context)
+
+
+def loginPage(request):
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		password = request.POST.get('password')
+
+		user = authenticate(request,username= username, password= password)
+		if user is not None:
+			login(request, user)
+			return redirect('/')
+		else:
+			messages.info(request, 'Username or Password is incorrect')
+
+	context = {}
+	return render(request,'store/login.html',context)
+
+def logoutUser(request):
+	logout(request)
+	return redirect('/')
